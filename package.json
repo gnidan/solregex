@@ -1,10 +1,12 @@
 {
   "name": "solregex",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "solidity regex library",
-  "main": "index.js",
   "author": "g. nicholas d'andrea <nick@gnidan.org>",
   "license": "MIT",
+  "bin": {
+    "solregex": "index.js"
+  },
   "dependencies": {
     "argparse": "^1.0.9",
     "automata.js": "^0.2.1"

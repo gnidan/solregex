@@ -22,6 +22,13 @@ Automata's support for regex components:
 > * `\w`: [a-zA-Z0-9\_]
 > * `\d`: [0-9]
 
+Install
+-------
+
+```
+npm install -g solregex
+```
+
 Usage
 -----
 
