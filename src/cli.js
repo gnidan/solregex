@@ -1,9 +1,9 @@
-#!/usr/bin/env node
-
 'use strict';
 
 var RegParser = require('automata.js');
 var ArgumentParser = require('argparse').ArgumentParser;
+
+var VERSION = require('../package.json').version;
 
 let template = (name, initial, stateSpecs, transitionSpecs) => `pragma solidity ^0.4.11;
 
@@ -86,7 +86,7 @@ function generateSolidity(name, regex) {
 }
 
 var argParser = new ArgumentParser({
-  version: require('./package.json').version,
+  version: VERSION,
   addHelp: true,
   description: "Regex Solidity Generator"
 });
