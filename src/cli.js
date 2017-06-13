@@ -19,11 +19,7 @@ contract ${name} {
   mapping (uint => State) states;
   uint constant INITIAL_STATE_ID = ${initial};
 
-  function ${name}() {${stateSpecs}
-${transitionSpecs}
-  }
-
-  function reMatch(string input) constant returns (bool) {
+  function matches(string input) constant returns (bool) {
     var state = states[INITIAL_STATE_ID];
 
     for (var i = 0; i < bytes(input).length; i++) {
@@ -40,6 +36,10 @@ ${transitionSpecs}
 
     // end of string, current state indicates acceptance
     return state.accepts;
+  }
+
+  function ${name}() {${stateSpecs}
+${transitionSpecs}
   }
 }`;
 
