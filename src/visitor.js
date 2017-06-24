@@ -10,7 +10,7 @@ class Visitor {
 
     var method = methods[item.type];
     if (method) {
-      method.apply(this, [item, from, to]);
+      Reflect.apply(method, this, [item, from, to]);
     } else {
       throw new Error("Method not found for type: " + item.type);
     }

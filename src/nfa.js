@@ -5,8 +5,6 @@ var parseRegex = require('regjsparser').parse;
 
 var {Visitor} = require('./visitor');
 
-var EPSILON = null;
-
 class State {
   static nextId() {
     if (!State._nextId) {
@@ -38,26 +36,32 @@ class Transition {
   constructor(value) {
     this._value = value;
   }
+}
 
-  matches(character) {
-    if (this._value.type === "value") {
-      return this._value.codePoint === character.codePointAt(0);
-    }
-
-    if (this._value.type === "characterClass") {
-      return this.matchesCharacterClass(character);
-    }
-  }
-
-  matchesCharacterClass(character) {
-    let shouldMatch = !this._value.negative;
-    return this._value.body
-      .map(value => value.codePoint === character.codePointAt(0))
-      .filter(doesMatch => (shouldMatch && doesMatch) || (!shouldMatch && !doesMatch))
-      .length > 0;
+class Epsilon extends Transition {
+  matches() {
+    return true || this;
   }
 }
 
+const EPSILON = new Epsilon();
+
+class Symbol extends Transition {
+  matches(character) {
+    return this._value.codePoint === character.codePointAt(0);
+  }
+}
+
+class CharacterClass extends Transition {
+  matches(character) {
+    let shouldMatch = !this._value.negative;
+
+    return this._value.body.
+      map(value => value.codePoint === character.codePointAt(0)).
+      filter(doesMatch => shouldMatch ? doesMatch : !doesMatch).
+      length > 0;
+  }
+}
 
 class NFA extends Graph {
   constructor() {
@@ -97,7 +101,9 @@ class NFA extends Graph {
       traverse.delete(from);
       known.add(from);
 
-      for (let [to, _, transition] of this.verticesFrom(from)) {
+      for (let record of this.verticesFrom(from)) {
+        let to = record[0];
+        let transition = record[2];
         if (transition === EPSILON && !known.has(to)) {
           traverse.add(to);
         }
@@ -110,8 +116,10 @@ class NFA extends Graph {
   transition(from, on) {
     var possible = new Set([]);
 
-    for (let [to, _, transition] of this.verticesFrom(from)) {
-      if (transition !== EPSILON && transition.matches(on)) {
+    for (let record of this.verticesFrom(from)) {
+      let to = record[0];
+      let transition = record[2];
+      if (transition.matches(on)) {
         possible.add(to);
       }
     }
@@ -119,42 +127,38 @@ class NFA extends Graph {
     return possible;
   }
 
-  process(input) {
-    var gen = function *() {
-      var cur = new Set([this._start]);
+  *process(input) {
+    var cur = new Set([this._start]);
+    cur = this.epsilonClosure(cur);
+
+    yield cur;
+
+    for (var i = 0; i < input.length; i++) {
+      var character = input[i];
+
+      // set of sets reduction, blurgh
+      cur = new Set([].concat(
+        ...Array.from(cur).
+          map(state => this.transition(state, character)).
+          map(states => Array.from(states))
+      ));
       cur = this.epsilonClosure(cur);
 
       yield cur;
-
-      for (var i = 0; i < input.length; i++) {
-        var character = input[i];
-
-        // set of sets reduction, blurgh
-        cur = new Set([].concat(
-          ...Array.from(cur)
-            .map(state => this.transition(state, character))
-            .map(states => Array.from(states))
-        ));
-        cur = this.epsilonClosure(cur);
-
-        yield cur;
-      }
-    };
-
-    return gen.apply(this, []);
+    }
   }
 
   matches(input) {
     var gen = this.process(input);
-    let result;
+    let result = [];
     for (let step of gen) {
       result = step;
     }
 
-    return Array.from(result)
-      .map(key => this.vertexValue(key))
-      .filter(state => state.accepts)
-      .length > 0;
+    return Array.from(result).
+      map(key => this.vertexValue(key)).
+      filter(state => state.accepts).
+      length > 0;
 
   }
 
@@ -171,19 +175,19 @@ class NFAVisitor extends Visitor {
   }
 
   visitValue(value, from, to) {
-    var transition = new Transition(value);
+    var transition = new Symbol(value);
     this.nfa.addNewEdge(from, to, transition);
   }
 
   visitCharacterClass(characterClass, from, to) {
-    var transition = new Transition(characterClass);
+    var transition = new CharacterClass(characterClass);
     this.nfa.addNewEdge(from, to, transition);
   }
 
   visitAlternative(alternative, from, to) {
     var curFrom = from;
-    var curTo;
-    alternative.body.forEach(child => {
+    var curTo = null;
+    alternative.body.forEach((child) => {
       curTo = this.nfa.createState();
 
       this.walk(child, curFrom, curTo);
@@ -195,7 +199,7 @@ class NFAVisitor extends Visitor {
   }
 
   visitDisjunction(disjunction, from, to) {
-    disjunction.body.forEach(child => {
+    disjunction.body.forEach((child) => {
       var from_ = this.nfa.createState();
       this.nfa.epsilonTransition(from, from_);
 
