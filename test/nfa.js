@@ -96,4 +96,20 @@ describe("NFAVisitor", function() {
     assert.ok(!nfa.matches("bc"));
     assert.ok(!nfa.matches("bd"));
   });
+
+  it("should process character classes", function() {
+    var visitor = new NFAVisitor("[a]");
+    var nfa = visitor.nfa;
+
+    assert.ok(nfa.matches("a"));
+    assert.ok(!nfa.matches("b"));
+  });
+
+  it("should process negative character classes", function() {
+    var visitor = new NFAVisitor("[^a]");
+    var nfa = visitor.nfa;
+
+    assert.ok(!nfa.matches("a"));
+    assert.ok(nfa.matches("b"));
+  });
 });

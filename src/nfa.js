@@ -40,7 +40,21 @@ class Transition {
   }
 
   matches(character) {
-    return this._value.codePoint === character.codePointAt(0);
+    if (this._value.type === "value") {
+      return this._value.codePoint === character.codePointAt(0);
+    }
+
+    if (this._value.type === "characterClass") {
+      return this.matchesCharacterClass(character);
+    }
+  }
+
+  matchesCharacterClass(character) {
+    let shouldMatch = !this._value.negative;
+    return this._value.body
+      .map(value => value.codePoint === character.codePointAt(0))
+      .filter(doesMatch => (shouldMatch && doesMatch) || (!shouldMatch && !doesMatch))
+      .length > 0;
   }
 }
 
@@ -158,6 +172,11 @@ class NFAVisitor extends Visitor {
 
   visitValue(value, from, to) {
     var transition = new Transition(value);
+    this.nfa.addNewEdge(from, to, transition);
+  }
+
+  visitCharacterClass(characterClass, from, to) {
+    var transition = new Transition(characterClass);
     this.nfa.addNewEdge(from, to, transition);
   }
 
