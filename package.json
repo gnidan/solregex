@@ -7,9 +7,13 @@
   "bin": {
     "solregex": "dist/main.bundle.js"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "lint": "eslint ./src",
+    "lint": "eslint ./src || true",
+    "test": "mocha-webpack",
+    "watch": "mocha-webpack --watch",
     "compile": "webpack",
     "prepublish": "webpack -p",
     "clean": "rm -rf ./dist"
@@ -20,7 +24,6 @@
     "ethereum"
   ],
   "devDependencies": {
-    "argparse": "^1.0.9",
     "automata.js": "^0.2.1",
     "babel-core": "^6.25.0",
     "babel-loader": "^7.0.0",
@@ -29,8 +32,18 @@
     "babel-runtime": "^6.23.0",
     "eslint": "^3.0.0",
     "eslint-loader": "^1.7.1",
+    "mocha": "^3.4.2",
+    "mocha-webpack": "next",
     "webpack": "^2.6.1",
-    "webpack-dev-server": "2"
+    "webpack-dev-server": "2",
+    "webpack-node-externals": "^1.6.0"
   },
-  "repository": "git@github.com:gnidan/solregex.git"
+  "repository": "git@github.com:gnidan/solregex.git",
+  "dependencies": {
+    "argparse": "^1.0.9",
+    "babel-polyfill": "^6.23.0",
+    "graph.js": "^1.21.1",
+    "regexp-js": "https://github.com/dhruvbird/regexp-js.git",
+    "regjsparser": "^0.2.1"
+  }
 }
