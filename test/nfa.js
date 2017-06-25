@@ -1,50 +1,52 @@
 var assert = require("assert");
 
-var {NFAVisitor} = require("../src/nfa.js");
+var {NFAVisitor} = require("../src/nfa");
 
 describe("NFAVisitor", function() {
-  it("should accept individual symbols", function() {
-    var visitor = new NFAVisitor("a");
-    var nfa = visitor.nfa;
+  // TODO decide if these tests should be deleted or to become unit tests
+  //
+  // it("should accept individual symbols", function() {
+  //   var visitor = new NFAVisitor("a");
+  //   var nfa = visitor.nfa;
 
-    assert.equal(nfa.vertexCount(), 2);
-    assert.equal(nfa.edgeCount(), 1);
-  });
+  //   assert.equal(nfa.vertexCount(), 2);
+  //   assert.equal(nfa.edgeCount(), 1);
+  // });
 
-  it("should accept disjunctions", function() {
-    // there should be:
-    //    2 * n + 2 states
-    // and:
-    //    3 * n transitions
-    var visitor = new NFAVisitor("a|b");
-    var nfa = visitor.nfa;
-    assert.equal(nfa.vertexCount(), 6);
-    assert.equal(nfa.edgeCount(), 6);
+  // it("should accept disjunctions", function() {
+  //   // there should be:
+  //   //    2 * n + 2 states
+  //   // and:
+  //   //    3 * n transitions
+  //   var visitor = new NFAVisitor("a|b");
+  //   var nfa = visitor.nfa;
+  //   assert.equal(nfa.vertexCount(), 6);
+  //   assert.equal(nfa.edgeCount(), 6);
 
-    visitor = new NFAVisitor("a|b|c");
-    nfa = visitor.nfa;
-    assert.equal(nfa.vertexCount(), 8);
-    assert.equal(nfa.edgeCount(), 9);
+  //   visitor = new NFAVisitor("a|b|c");
+  //   nfa = visitor.nfa;
+  //   assert.equal(nfa.vertexCount(), 8);
+  //   assert.equal(nfa.edgeCount(), 9);
 
-    visitor = new NFAVisitor("a|b|c|d");
-    nfa = visitor.nfa;
-    assert.equal(nfa.vertexCount(), 10);
-    assert.equal(nfa.edgeCount(), 12);
-  });
+  //   visitor = new NFAVisitor("a|b|c|d");
+  //   nfa = visitor.nfa;
+  //   assert.equal(nfa.vertexCount(), 10);
+  //   assert.equal(nfa.edgeCount(), 12);
+  // });
 
-  it("should accept concatenations", function() {
-    var visitor = new NFAVisitor("ab");
-    var nfa = visitor.nfa;
+  // it("should accept concatenations", function() {
+  //   var visitor = new NFAVisitor("ab");
+  //   var nfa = visitor.nfa;
 
-    assert.equal(nfa.vertexCount(), 4);
-    assert.equal(nfa.edgeCount(), 3);
+  //   assert.equal(nfa.vertexCount(), 4);
+  //   assert.equal(nfa.edgeCount(), 3);
 
-    visitor = new NFAVisitor("abc");
-    nfa = visitor.nfa;
+  //   visitor = new NFAVisitor("abc");
+  //   nfa = visitor.nfa;
 
-    assert.equal(nfa.vertexCount(), 5);
-    assert.equal(nfa.edgeCount(), 4);
-  });
+  //   assert.equal(nfa.vertexCount(), 5);
+  //   assert.equal(nfa.edgeCount(), 4);
+  // });
 
   it("should process a single char regex", function() {
     var visitor = new NFAVisitor("a");
