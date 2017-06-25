@@ -52,12 +52,34 @@ class Symbol extends Transition {
   }
 }
 
+class Dot extends Transition {
+  matches() {
+    return true || this;
+  }
+}
+
+class CharacterClassRange extends Transition {
+  matches(character) {
+    return this._value.min.codePoint <= character.codePointAt(0) &&
+      this._value.max.codePoint >= character.codePointAt(0);
+  }
+}
+
 class CharacterClass extends Transition {
   matches(character) {
     let shouldMatch = !this._value.negative;
 
-    return this._value.body.
-      map(value => value.codePoint === character.codePointAt(0)).
+    var children = this._value.body.map(child => {
+      if (child.type === "value") {
+        return new Symbol(child);
+      }
+      if (child.type === "characterClassRange") {
+        return new CharacterClassRange(child);
+      }
+      throw new Error("Unknown item in character class body");
+    });
+
+    return children.map(child => child.matches(character)).
       filter(doesMatch => shouldMatch ? doesMatch : !doesMatch).
       length > 0;
   }
@@ -181,6 +203,11 @@ class NFAVisitor extends Visitor {
 
   visitCharacterClass(characterClass, from, to) {
     var transition = new CharacterClass(characterClass);
+    this.nfa.addNewEdge(from, to, transition);
+  }
+
+  visitDot(dot, from, to) {
+    var transition = new Dot(dot);
     this.nfa.addNewEdge(from, to, transition);
   }
 

@@ -1,6 +1,7 @@
 class Visitor {
   walk(item, from, to) {
     var methods = {
+      "dot": this.visitDot,
       "characterClass": this.visitCharacterClass,
       "disjunction": this.visitDisjunction,
       "alternative": this.visitAlternative,

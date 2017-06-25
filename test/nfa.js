@@ -112,4 +112,38 @@ describe("NFAVisitor", function() {
     assert.ok(!nfa.matches("a"));
     assert.ok(nfa.matches("b"));
   });
+
+  it("should process character class ranges", function() {
+    var visitor = new NFAVisitor("[d-f]");
+    var nfa = visitor.nfa;
+
+    assert.ok(nfa.matches("d"));
+    assert.ok(nfa.matches("e"));
+    assert.ok(nfa.matches("f"));
+    assert.ok(!nfa.matches("a"));
+    assert.ok(!nfa.matches("b"));
+    assert.ok(!nfa.matches("g"));
+    assert.ok(!nfa.matches("h"));
+  })
+
+  it("should process character class ranges", function() {
+    var visitor = new NFAVisitor("[^d-f]");
+    var nfa = visitor.nfa;
+
+    assert.ok(!nfa.matches("d"));
+    assert.ok(!nfa.matches("e"));
+    assert.ok(!nfa.matches("f"));
+    assert.ok(nfa.matches("a"));
+    assert.ok(nfa.matches("b"));
+    assert.ok(nfa.matches("g"));
+    assert.ok(nfa.matches("h"));
+  })
+
+  it("processes the dot recognizer", function() {
+    var visitor = new NFAVisitor(".");
+    var nfa = visitor.nfa;
+
+    assert.ok(nfa.matches("a"));
+    assert.ok(!nfa.matches("aa"));
+  });
 });
