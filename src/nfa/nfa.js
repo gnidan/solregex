@@ -34,11 +34,10 @@ class NFA {
     options = options || {};
     options.accepting = options.accepting || false;
 
-    var id = this.nextStateId;
-    var state = new State(id, options);
-    this._graph.addVertex(state.id, state);
+    let id = this.nextStateId;
+    this._graph.addVertex(id, new State(id, options));
 
-    return state.id;
+    return id;
   }
 
   addTransition(from, to, transition) {
@@ -112,10 +111,7 @@ class NFA {
       map(key => this._graph.vertexValue(key)).
       filter(state => state.accepts).
       length > 0;
-
   }
-
-
 }
 
 module.exports = {
