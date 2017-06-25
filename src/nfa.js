@@ -4,34 +4,8 @@ var Graph = require('graph.js/dist/graph.full.js');
 var parseRegex = require('regjsparser').parse;
 
 var {Visitor} = require('./visitor');
+var {State} = require('./machines/state');
 var {Transition, MatchClassVisitor} = require('./machines/transition');
-
-class State {
-  static nextId() {
-    if (!State._nextId) {
-      State._nextId = 1000;
-    }
-    var value = State._nextId;
-    State._nextId += 1;
-
-    return value;
-  }
-
-  constructor(options) {
-    this._id = State.nextId();
-
-    options = options || {};
-    this._accepting = options.accepting || false;
-  }
-
-  get id() {
-    return String(this._id);
-  }
-
-  get accepts() {
-    return this._accepting;
-  }
-}
 
 const EPSILON = null;
 
