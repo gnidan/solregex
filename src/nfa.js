@@ -4,6 +4,7 @@ var Graph = require('graph.js/dist/graph.full.js');
 var parseRegex = require('regjsparser').parse;
 
 var {Visitor} = require('./visitor');
+var {Transition, MatchClassVisitor} = require('./machines/transition');
 
 class State {
   static nextId() {
@@ -32,58 +33,7 @@ class State {
   }
 }
 
-class Transition {
-  constructor(value) {
-    this._value = value;
-  }
-}
-
-class Epsilon extends Transition {
-  matches() {
-    return true || this;
-  }
-}
-
-const EPSILON = new Epsilon();
-
-class Symbol extends Transition {
-  matches(character) {
-    return this._value.codePoint === character.codePointAt(0);
-  }
-}
-
-class Dot extends Transition {
-  matches() {
-    return true || this;
-  }
-}
-
-class CharacterClassRange extends Transition {
-  matches(character) {
-    return this._value.min.codePoint <= character.codePointAt(0) &&
-      this._value.max.codePoint >= character.codePointAt(0);
-  }
-}
-
-class CharacterClass extends Transition {
-  matches(character) {
-    let shouldMatch = !this._value.negative;
-
-    var children = this._value.body.map(child => {
-      if (child.type === "value") {
-        return new Symbol(child);
-      }
-      if (child.type === "characterClassRange") {
-        return new CharacterClassRange(child);
-      }
-      throw new Error("Unknown item in character class body");
-    });
-
-    return children.map(child => child.matches(character)).
-      filter(doesMatch => shouldMatch ? doesMatch : !doesMatch).
-      length > 0;
-  }
-}
+const EPSILON = null;
 
 class NFA extends Graph {
   constructor() {
@@ -141,7 +91,7 @@ class NFA extends Graph {
     for (let record of this.verticesFrom(from)) {
       let to = record[0];
       let transition = record[2];
-      if (transition.matches(on)) {
+      if (transition !== EPSILON && transition.matches(on)) {
         possible.add(to);
       }
     }
@@ -196,19 +146,22 @@ class NFAVisitor extends Visitor {
     this.walk(pattern, this.nfa.start, this.nfa.end);
   }
 
-  visitValue(value, from, to) {
-    var transition = new Symbol(value);
+  visitTransition(transitionNode, from, to) {
+    var matchClass = new MatchClassVisitor().visit(transitionNode);
+    var transition = new Transition(matchClass);
     this.nfa.addNewEdge(from, to, transition);
   }
 
-  visitCharacterClass(characterClass, from, to) {
-    var transition = new CharacterClass(characterClass);
-    this.nfa.addNewEdge(from, to, transition);
+  visitValue(...args) {
+    Reflect.apply(this.visitTransition, this, args);
   }
 
-  visitDot(dot, from, to) {
-    var transition = new Dot(dot);
-    this.nfa.addNewEdge(from, to, transition);
+  visitCharacterClass(...args) {
+    Reflect.apply(this.visitTransition, this, args);
+  }
+
+  visitDot(...args) {
+    Reflect.apply(this.visitTransition, this, args);
   }
 
   visitAlternative(alternative, from, to) {

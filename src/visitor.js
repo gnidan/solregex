@@ -1,8 +1,9 @@
 class Visitor {
-  walk(item, from, to) {
+  walk(item, ...args) {
     var methods = {
       "dot": this.visitDot,
       "characterClass": this.visitCharacterClass,
+      "characterClassRange": this.visitCharacterClassRange,
       "disjunction": this.visitDisjunction,
       "alternative": this.visitAlternative,
       "group": this.visitAlternative,
@@ -11,10 +12,10 @@ class Visitor {
 
     var method = methods[item.type];
     if (method) {
-      Reflect.apply(method, this, [item, from, to]);
-    } else {
-      throw new Error("Method not found for type: " + item.type);
+      return Reflect.apply(method, this, [item].concat(args));
     }
+
+    throw new Error("Method not found for type: " + item.type);
   }
 }
 

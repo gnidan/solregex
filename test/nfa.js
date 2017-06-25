@@ -139,7 +139,7 @@ describe("NFAVisitor", function() {
     assert.ok(nfa.matches("h"));
   })
 
-  it("processes the dot recognizer", function() {
+  it("should process dots", function() {
     var visitor = new NFAVisitor(".");
     var nfa = visitor.nfa;
 
