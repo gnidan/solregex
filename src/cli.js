@@ -5,8 +5,6 @@
 var RegParser = require('automata.js');
 var ArgumentParser = require('argparse').ArgumentParser;
 
-require('./nfa.js');
-
 var VERSION = require('../package.json').version;
 
 let template = (name, initial, stateSpecs, transitionSpecs) => `pragma solidity ^0.4.11;
