@@ -8,6 +8,9 @@ module.exports = {
 
   module: {
     rules: [{
+      test: /\.templ$/,
+      loader: 'mustache-loader'
+    }, {
       test: /\.js$/,
       loader: 'babel-loader',
       query: {

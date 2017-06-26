@@ -14,6 +14,9 @@ module.exports = {
       options: {
       },
     }, {
+      test: /\.templ$/,
+      loader: 'mustache-loader'
+    }, {
       test: /\.js$/,
       loader: 'babel-loader',
       query: {
