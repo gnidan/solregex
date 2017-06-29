@@ -7,6 +7,7 @@ class Visitor {
       "disjunction": this.visitDisjunction,
       "alternative": this.visitAlternative,
       "group": this.visitAlternative,
+      "quantifier": this.visitQuantifier,
       "value": this.visitValue
     };
 

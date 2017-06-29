@@ -8,8 +8,11 @@ module.exports = {
 
   module: {
     rules: [{
-      test: /\.templ$/,
-      loader: 'mustache-loader'
+      test: /\.hbs$/,
+      loader: 'transform-loader?hbsfy',
+      // query: {
+      //   extensions: [".templ"]
+      // }
     }, {
       test: /\.js$/,
       loader: 'babel-loader',
@@ -19,6 +22,8 @@ module.exports = {
       },
       include: [
         path.resolve(__dirname, './src'),
+        path.resolve(__dirname, './node_modules/node-interval-tree'),
+        path.resolve(__dirname, './node_modules/solc'),
         path.resolve(__dirname, './test')
       ],
     }],

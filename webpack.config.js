@@ -14,8 +14,8 @@ module.exports = {
       options: {
       },
     }, {
-      test: /\.templ$/,
-      loader: 'mustache-loader'
+      test: /\.hbs$/,
+      loader: 'transform-loader?hbsfy'
     }, {
       test: /\.js$/,
       loader: 'babel-loader',
@@ -24,7 +24,8 @@ module.exports = {
         plugins: [],
       },
       include: [
-        path.resolve(__dirname, './src')
+        path.resolve(__dirname, './src'),
+        path.resolve(__dirname, './node_modules/node-interval-tree')
       ],
     }],
   },

@@ -4,10 +4,11 @@ class State {
 
     options = options || {};
     this._accepting = options.accepting || false;
+    this._options = options;
   }
 
   get id() {
-    return String(this._id);
+    return this._id;
   }
 
   get accepts() {

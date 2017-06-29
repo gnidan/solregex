@@ -1,0 +1,57 @@
+{{#*inline "transitionExpr"~}}
+  {{#join matchIntervals " || "~}}
+  c >= {{0}} && c <= {{1}}
+  {{~/join}}
+{{~/inline}}
+
+pragma solidity ^0.4.11;
+
+contract {{name}} {
+  struct State {
+    bool accepts;
+    function (byte) constant internal returns (uint) func;
+  }
+
+{{#if regex}}
+  string public constant regex = "{{regex}}";
+
+{{/if}}
+  function state(uint id) constant internal returns (State) {
+{{#states}}
+    if (id == {{id}}) {
+      return State({{accepts}}, s{{id}});
+    }
+{{/states}}
+  }
+
+  function matches(string input) constant returns (bool) {
+    uint cur = 1;
+
+    for (var i = 0; i < bytes(input).length; i++) {
+      var c = bytes(input)[i];
+
+      cur = state(cur).func(c);
+      if (cur == 0) {
+        return false;
+      }
+    }
+
+    return state(cur).accepts;
+  }
+{{#states}}
+
+  function s{{id}}(byte c) constant internal returns (uint) {
+{{#outputs}}
+    if ({{> transitionExpr }}) {
+      return {{to}};
+    }
+{{/outputs}}
+{{^outputs}}
+    // silence unused var warning
+    c = c;
+{{/outputs}}
+
+    return 0;
+  }
+{{/states}}
+}

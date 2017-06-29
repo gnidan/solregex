@@ -2,7 +2,9 @@
 
 var parseRegex = require('regjsparser').parse;
 
-var {Transition, MatchClassVisitor} = require('../machines/transition');
+var {Transition} = require('../machines/transition');
+var {MatchClassVisitor} = require('../machines/matchClass');
+
 var {Visitor} = require('../visitor');
 
 var {NFA, EPSILON} = require('./nfa.js');
@@ -59,6 +61,32 @@ class NFAVisitor extends Visitor {
 
       this.walk(child, from_, to_);
     });
+  }
+
+  visitQuantifier(quantifier, from, to) {
+    let {min, max} = quantifier;
+
+    let cur = from;
+
+    let statesNeeded = max === undefined ? min : max;
+    for (var i = 1; i <= statesNeeded; i++) {
+      let state = this.nfa.addState();
+
+      this.walk(quantifier.body[0], cur, state);
+
+      if (i >= min) {
+        this.nfa.addTransition(state, to, EPSILON);
+      }
+
+      cur = state;
+    }
+
+    if (quantifier.max === undefined) {
+      let state = this.nfa.addState();
+      this.nfa.addTransition(cur, state, EPSILON);
+      this.nfa.addTransition(state, to, EPSILON);
+      this.walk(quantifier.body[0], state, state);
+    }
   }
 }
 

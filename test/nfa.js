@@ -148,4 +148,89 @@ describe("NFAVisitor", function() {
     assert.ok(nfa.matches("a"));
     assert.ok(!nfa.matches("aa"));
   });
+
+  it("should process asterisks", function() {
+    var visitor = new NFAVisitor("a*");
+    var nfa = visitor.nfa;
+
+    assert.ok(nfa.matches("a"));
+    assert.ok(nfa.matches("aa"));
+    assert.ok(nfa.matches("aaa"));
+    assert.ok(nfa.matches(""));
+  });
+
+  it("should process plus signs", function() {
+    var visitor = new NFAVisitor("a+");
+    var nfa = visitor.nfa;
+
+    assert.ok(!nfa.matches(""));
+    assert.ok(nfa.matches("a"));
+    assert.ok(nfa.matches("aa"));
+    assert.ok(nfa.matches("aaa"));
+  });
+
+  it("should process question marks", function() {
+    var visitor = new NFAVisitor("a?");
+    var nfa = visitor.nfa;
+
+    assert.ok(!nfa.matches(""));
+    assert.ok(nfa.matches("a"));
+    assert.ok(!nfa.matches("aa"));
+  });
+
+
+  it("should process quantifiers", function() {
+    var visitor = new NFAVisitor("a{3,5}");
+    var nfa = visitor.nfa;
+
+    assert.ok(!nfa.matches(""));
+    assert.ok(!nfa.matches("a"));
+    assert.ok(!nfa.matches("aa"));
+    assert.ok(nfa.matches("aaa"));
+    assert.ok(nfa.matches("aaaa"));
+    assert.ok(nfa.matches("aaaaa"));
+    assert.ok(!nfa.matches("aaaaaa"));
+    assert.ok(!nfa.matches("aaaaaaa"));
+  });
+
+  it("should process quantifiers without a maximum", function() {
+    var visitor = new NFAVisitor("a{3,}");
+    var nfa = visitor.nfa;
+
+    assert.ok(!nfa.matches(""));
+    assert.ok(!nfa.matches("a"));
+    assert.ok(!nfa.matches("aa"));
+    assert.ok(nfa.matches("aaa"));
+    assert.ok(nfa.matches("aaaa"));
+    assert.ok(nfa.matches("aaaaa"));
+    assert.ok(nfa.matches("aaaaaa"));
+    assert.ok(nfa.matches("aaaaaaa"));
+  });
+
+  it("should process exact quantifiers", function() {
+    var visitor = new NFAVisitor("a{3}");
+    var nfa = visitor.nfa;
+
+    assert.ok(!nfa.matches(""));
+    assert.ok(!nfa.matches("a"));
+    assert.ok(!nfa.matches("aa"));
+    assert.ok(nfa.matches("aaa"));
+    assert.ok(!nfa.matches("aaaa"));
+    assert.ok(!nfa.matches("aaaaa"));
+    assert.ok(!nfa.matches("aaaaaa"));
+    assert.ok(!nfa.matches("aaaaaaa"));
+  });
+
+  it("should process quantifiers with repeated group", function() {
+    var visitor = new NFAVisitor("(abc){2,4}");
+    var nfa = visitor.nfa;
+
+    assert.ok(!nfa.matches(""));
+    assert.ok(!nfa.matches("abc"));
+    assert.ok(!nfa.matches("abc"));
+    assert.ok(nfa.matches("abcabc"));
+    assert.ok(nfa.matches("abcabcabc"));
+    assert.ok(nfa.matches("abcabcabcabc"));
+    assert.ok(!nfa.matches("abcabcabcabcabc"));
+  })
 });
