@@ -18,6 +18,13 @@ Usage
 $ solregex --name BasicRegex 'a+(ab)*b+' > ./contracts/BasicRegex.sol
 ```
 
+Example
+-------
+
+A contract to match email addresses is deployed at
+`0xeD1c69227e2BCcC22E2D0A3E61b45bE032c70fB9`.
+([Try it on Etherscan.io!](https://etherscan.io/address/0xed1c69227e2bccc22e2d0a3e61b45be032c70fb9#readContract))
+
 Status
 ------
 
