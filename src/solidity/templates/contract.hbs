@@ -13,7 +13,7 @@ contract {{name}} {
   }
 
 {{#if regex}}
-  string public constant regex = "{{regex}}";
+  string public constant regex = "{{{regex}}}";
 
 {{/if}}
   function state(uint id) constant internal returns (State) {
