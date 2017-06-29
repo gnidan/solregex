@@ -1,6 +1,6 @@
 {
   "name": "solregex",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "generates Solidity smart contracts to match regular expressions",
   "author": "g. nicholas d'andrea <nick@gnidan.org>",
   "license": "MIT",
