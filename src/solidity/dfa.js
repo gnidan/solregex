@@ -29,12 +29,16 @@ class SolidityDFAWriter {
           }))
       }));
 
-    return dfaTemplate({
+    let templateData = {
       states: statesData,
       startAccepts: dfa.stateDescription(dfa.start).accepts,
-      name: options.name,
-      regex: options.regex
-    });
+      name: options.name
+    }
+    if (options.regex) {
+      templateData.regex = options.regex.replace("\\", "\\\\");
+    }
+
+    return dfaTemplate(templateData);
   }
 }
 
