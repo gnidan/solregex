@@ -14,18 +14,24 @@ class SolidityDFAWriter {
     options.name = options.name || "Regex";
 
     let statesData = Array.from(dfa.states()).
-      map(({id, accepts}) => Object({
+      map(({id}) => Object({
         id,
-        accepts,
         outputs: Array.from(dfa.transitionsFrom(id)).
           map(({to, transition}) => Object({
             to,
-            matchIntervals: Array.from(transition.matchIntervals)
+            accepts: dfa.stateDescription(to).accepts,
+            matchIntervals: Array.from(transition.matchIntervals).
+              map(([low, high]) => Object({
+                low,
+                high,
+                equal: low === high
+              }))
           }))
       }));
 
     return dfaTemplate({
       states: statesData,
+      startAccepts: dfa.stateDescription(dfa.start).accepts,
       name: options.name,
       regex: options.regex
     });

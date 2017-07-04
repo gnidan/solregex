@@ -1,6 +1,10 @@
 {{#*inline "transitionExpr"~}}
   {{#join matchIntervals " || "~}}
-  c >= {{0}} && c <= {{1}}
+    {{#if equal~}}
+  c == {{low}}
+    {{~else~}}
+  c >= {{low}} && c <= {{high}}
+    {{~/if}}
   {{~/join}}
 {{~/inline}}
 pragma solidity ^0.4.11;
@@ -24,7 +28,7 @@ contract {{name}} {
   function s{{id}}(byte c) constant internal returns (State memory) {
 {{#outputs}}
     if ({{> transitionExpr }}) {
-      return State({{../accepts}}, s{{to}});
+      return State({{accepts}}, s{{to}});
     }
 {{/outputs}}
 {{^outputs}}
@@ -37,7 +41,7 @@ contract {{name}} {
 
 {{/states}}
   function matches(string input) constant returns (bool) {
-    var cur = State(false, s1);
+    var cur = State({{startAccepts}}, s1);
 
     for (uint i = 0; i < bytes(input).length; i++) {
       var c = bytes(input)[i];

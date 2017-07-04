@@ -29,7 +29,7 @@ describe("Solidity Output", function() {
 
     var evm = solc.compile(solidity);
 
-    assert.ok(!evm.errors, "Got errors: " + JSON.stringify(evm.errors, null, 2));
+    assert.ok(!evm.errors);
     assert.ok(Object.keys(evm.contracts).includes(":Regex"));
   });
 });
