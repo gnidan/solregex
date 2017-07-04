@@ -47,9 +47,6 @@ contract {{name}} {
       var c = bytes(input)[i];
 
       cur = cur.func(c);
-      if (cur.func == s0) {
-        return false;
-      }
     }
 
     return cur.accepts;
