@@ -1,6 +1,10 @@
 solregex
 ========
 
+[![Travis](https://img.shields.io/travis/gnidan/solregex.svg)](https://travis-ci.org/gnidan/solregex)
+[![npm](https://img.shields.io/npm/v/solregex.svg)](https://www.npmjs.com/package/solregex)
+
+
 Tool to generate a Solidity smart contract for a given regular expression.
 
 
