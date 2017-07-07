@@ -5,9 +5,9 @@ var parseRegex = require('regjsparser').parse;
 var {Transition} = require('../machines/transition');
 var {MatchClassVisitor} = require('../machines/matchClass');
 
-var {Visitor} = require('../visitor');
+var {Visitor} = require('../ast/visitor');
 
-var {NFA, EPSILON} = require('./nfa.js');
+var {NFA, EPSILON} = require('./nfa');
 
 class NFAVisitor extends Visitor {
   constructor(regex) {

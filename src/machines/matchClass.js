@@ -1,4 +1,4 @@
-const {Visitor} = require('../visitor');
+const {Visitor} = require('../ast/visitor');
 const {IntervalTree} = require('node-interval-tree');
 
 const MIN_CODEPOINT = 0x00
