@@ -114,6 +114,14 @@ Supports `true`/`false` result for string matching against a regex.
 - Unicode support
 - Probably more, let me know!
 
+### Known Inefficiencies
+
+- Quantifiers using numeric literals (e.g. `a{40}`) generate numerous resulting
+  DFA states. This makes the output code very large very fast.
+
+  It may be possible to add support for compressing mostly-identical states
+  into a single state with parameters, to avoid so much output code.
+
 
 Contributing
 ------------
