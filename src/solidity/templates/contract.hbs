@@ -7,25 +7,25 @@
     {{~/if}}
   {{~/join}}
 {{~/inline}}
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.23;
 
-contract {{name}} {
+library {{name}} {
   struct State {
     bool accepts;
-    function (byte) constant internal returns (State memory) func;
+    function (byte) pure internal returns (State memory) func;
   }
 
 {{#if regex}}
   string public constant regex = "{{{regex}}}";
 
 {{/if}}
-  function s0(byte c) constant internal returns (State memory) {
+  function s0(byte c) pure internal returns (State memory) {
     c = c;
     return State(false, s0);
   }
 
 {{#states}}
-  function s{{id}}(byte c) constant internal returns (State memory) {
+  function s{{id}}(byte c) pure internal returns (State memory) {
 {{#outputs}}
     if ({{> transitionExpr }}) {
       return State({{accepts}}, s{{to}});
@@ -40,11 +40,11 @@ contract {{name}} {
   }
 
 {{/states}}
-  function matches(string input) constant returns (bool) {
-    var cur = State({{startAccepts}}, s1);
+  function matches(string input) public pure returns (bool) {
+    State memory cur = State({{startAccepts}}, s1);
 
     for (uint i = 0; i < bytes(input).length; i++) {
-      var c = bytes(input)[i];
+      byte c = bytes(input)[i];
 
       cur = cur.func(c);
     }

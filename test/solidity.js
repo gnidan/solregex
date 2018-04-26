@@ -16,7 +16,7 @@ describe("Solidity Output", function() {
 
     let output = writer.write(dfa, {regex}).trim();
 
-    assert.notEqual(output.indexOf("contract Regex"), -1);
+    assert.notEqual(output.indexOf("library Regex"), -1);
   });
 
   it("should compile without error", function() {
