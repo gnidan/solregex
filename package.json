@@ -45,7 +45,7 @@
     "solc": "^0.4.23",
     "transform-loader": "^0.2.4",
     "webpack": "^2.6.1",
-    "webpack-dev-server": "2",
+    "webpack-dev-server": "3",
     "webpack-node-externals": "^1.6.0"
   },
   "repository": "git@github.com:gnidan/solregex.git"
