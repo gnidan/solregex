@@ -6,6 +6,7 @@ import { version as VERSION } from "../package.json";
 
 import { SolidityDFAWriter } from "../src/solidity/dfa";
 import { GraphvizDFAWriter } from "../src/graphviz/dfa";
+import { GraphvizNFAWriter } from "../src/graphviz/nfa";
 import { dfaFromNFA } from "../src/dfa";
 import { nfaFromRegex } from "../src/nfa";
 
@@ -51,16 +52,46 @@ argParser.addArgument(
   }
 );
 
+argParser.addArgument(
+  ["--nfa", "-N"],
+  {
+    help: "generate output for NFA (only works with --dot)",
+    dest: "nfa",
+    action: "storeConst",
+    constant: true,
+    default: false
+  }
+);
+
 const args = argParser.parseArgs();
 
 const nfa = nfaFromRegex(args.regex);
+
+if (args.nfa) {
+  for (const target of args.outputs) {
+    if (target !== "graphviz") {
+      console.error("Use of --nfa only works with --dot output");
+      process.exit(1);
+    }
+
+    const writer = new GraphvizNFAWriter();
+    const output = writer.write(nfa, {
+      name: args.name,
+      regex: args.regex
+    });
+
+    console.log(output.trim());
+  }
+
+  process.exit(0);
+}
+
 const dfa = dfaFromNFA(nfa);
 
 const writers = {
   solidity: SolidityDFAWriter,
-  graphviz: GraphvizDFAWriter
+  graphviz: GraphvizDFAWriter,
 } as const;
-
 
 args.outputs = args.outputs || ["solidity"];
 
