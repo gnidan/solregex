@@ -1,6 +1,7 @@
-var assert = require("assert");
+import assert from "assert";
+import { describe, it } from "@jest/globals";
 
-var {NFAVisitor} = require("../src/nfa");
+import { NFAVisitor } from "../src/nfa";
 
 describe("NFAVisitor", function() {
   // TODO decide if these tests should be deleted or to become unit tests
@@ -49,16 +50,16 @@ describe("NFAVisitor", function() {
   // });
 
   it("should process a single char regex", function() {
-    var visitor = new NFAVisitor("a");
-    var nfa = visitor.nfa;
+    const visitor = new NFAVisitor("a");
+    const nfa = visitor.nfa;
 
     assert.ok(nfa.matches("a"));
     assert.ok(!nfa.matches("b"));
   });
 
   it("should process a disjunction", function() {
-    var visitor = new NFAVisitor("a|b");
-    var nfa = visitor.nfa;
+    const visitor = new NFAVisitor("a|b");
+    const nfa = visitor.nfa;
 
     assert.ok(nfa.matches("a"));
     assert.ok(nfa.matches("b"));
@@ -66,8 +67,8 @@ describe("NFAVisitor", function() {
   });
 
   it("should process concatenations", function() {
-    var visitor = new NFAVisitor("ab");
-    var nfa = visitor.nfa;
+    const visitor = new NFAVisitor("ab");
+    const nfa = visitor.nfa;
 
     assert.ok(!nfa.matches("a"));
     assert.ok(!nfa.matches("b"));
@@ -76,8 +77,8 @@ describe("NFAVisitor", function() {
   });
 
   it("should process the concatenation of the disjunction", function() {
-    var visitor = new NFAVisitor("(a|b)(c|d)");
-    var nfa = visitor.nfa;
+    const visitor = new NFAVisitor("(a|b)(c|d)");
+    const nfa = visitor.nfa;
 
     assert.ok(!nfa.matches("ab"));
     assert.ok(!nfa.matches("cd"));
@@ -88,8 +89,8 @@ describe("NFAVisitor", function() {
   });
 
   it("should process the disjunction of the concatenation", function() {
-    var visitor = new NFAVisitor("ab|cd");
-    var nfa = visitor.nfa;
+    const visitor = new NFAVisitor("ab|cd");
+    const nfa = visitor.nfa;
 
     assert.ok(nfa.matches("ab"));
     assert.ok(nfa.matches("cd"));
@@ -100,24 +101,24 @@ describe("NFAVisitor", function() {
   });
 
   it("should process character classes", function() {
-    var visitor = new NFAVisitor("[a]");
-    var nfa = visitor.nfa;
+    const visitor = new NFAVisitor("[a]");
+    const nfa = visitor.nfa;
 
     assert.ok(nfa.matches("a"));
     assert.ok(!nfa.matches("b"));
   });
 
   it("should process negative character classes", function() {
-    var visitor = new NFAVisitor("[^a]");
-    var nfa = visitor.nfa;
+    const visitor = new NFAVisitor("[^a]");
+    const nfa = visitor.nfa;
 
     assert.ok(!nfa.matches("a"));
     assert.ok(nfa.matches("b"));
   });
 
   it("should process character class ranges", function() {
-    var visitor = new NFAVisitor("[d-f]");
-    var nfa = visitor.nfa;
+    const visitor = new NFAVisitor("[d-f]");
+    const nfa = visitor.nfa;
 
     assert.ok(nfa.matches("d"));
     assert.ok(nfa.matches("e"));
@@ -129,8 +130,8 @@ describe("NFAVisitor", function() {
   })
 
   it("should process character class ranges", function() {
-    var visitor = new NFAVisitor("[^d-f]");
-    var nfa = visitor.nfa;
+    const visitor = new NFAVisitor("[^d-f]");
+    const nfa = visitor.nfa;
 
     assert.ok(!nfa.matches("d"));
     assert.ok(!nfa.matches("e"));
@@ -142,16 +143,16 @@ describe("NFAVisitor", function() {
   })
 
   it("should process dots", function() {
-    var visitor = new NFAVisitor(".");
-    var nfa = visitor.nfa;
+    const visitor = new NFAVisitor(".");
+    const nfa = visitor.nfa;
 
     assert.ok(nfa.matches("a"));
     assert.ok(!nfa.matches("aa"));
   });
 
   it("should process asterisks", function() {
-    var visitor = new NFAVisitor("a*");
-    var nfa = visitor.nfa;
+    const visitor = new NFAVisitor("a*");
+    const nfa = visitor.nfa;
 
     assert.ok(nfa.matches("a"));
     assert.ok(nfa.matches("aa"));
@@ -160,8 +161,8 @@ describe("NFAVisitor", function() {
   });
 
   it("should process plus signs", function() {
-    var visitor = new NFAVisitor("a+");
-    var nfa = visitor.nfa;
+    const visitor = new NFAVisitor("a+");
+    const nfa = visitor.nfa;
 
     assert.ok(!nfa.matches(""));
     assert.ok(nfa.matches("a"));
@@ -170,8 +171,8 @@ describe("NFAVisitor", function() {
   });
 
   it("should process question marks", function() {
-    var visitor = new NFAVisitor("a?");
-    var nfa = visitor.nfa;
+    const visitor = new NFAVisitor("a?");
+    const nfa = visitor.nfa;
 
     assert.ok(!nfa.matches(""));
     assert.ok(nfa.matches("a"));
@@ -180,8 +181,8 @@ describe("NFAVisitor", function() {
 
 
   it("should process quantifiers", function() {
-    var visitor = new NFAVisitor("a{3,5}");
-    var nfa = visitor.nfa;
+    const visitor = new NFAVisitor("a{3,5}");
+    const nfa = visitor.nfa;
 
     assert.ok(!nfa.matches(""));
     assert.ok(!nfa.matches("a"));
@@ -194,8 +195,8 @@ describe("NFAVisitor", function() {
   });
 
   it("should process quantifiers without a maximum", function() {
-    var visitor = new NFAVisitor("a{3,}");
-    var nfa = visitor.nfa;
+    const visitor = new NFAVisitor("a{3,}");
+    const nfa = visitor.nfa;
 
     assert.ok(!nfa.matches(""));
     assert.ok(!nfa.matches("a"));
@@ -208,8 +209,8 @@ describe("NFAVisitor", function() {
   });
 
   it("should process exact quantifiers", function() {
-    var visitor = new NFAVisitor("a{3}");
-    var nfa = visitor.nfa;
+    const visitor = new NFAVisitor("a{3}");
+    const nfa = visitor.nfa;
 
     assert.ok(!nfa.matches(""));
     assert.ok(!nfa.matches("a"));
@@ -222,8 +223,8 @@ describe("NFAVisitor", function() {
   });
 
   it("should process quantifiers with repeated group", function() {
-    var visitor = new NFAVisitor("(abc){2,4}");
-    var nfa = visitor.nfa;
+    const visitor = new NFAVisitor("(abc){2,4}");
+    const nfa = visitor.nfa;
 
     assert.ok(!nfa.matches(""));
     assert.ok(!nfa.matches("abc"));

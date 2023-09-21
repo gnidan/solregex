@@ -1,4 +1,4 @@
-{{#*inline "nodeLabel"~}}
+const template = `{{#*inline "nodeLabel"~}}
    <i>s</i><sub><font point-size="8">{{id}}</font></sub>
 {{~/inline}}
 
@@ -26,3 +26,6 @@ digraph dfa {
 {{/outputs}}
 {{/states}}
 }
+`;
+
+export default template;

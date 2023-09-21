@@ -1,7 +1,8 @@
-const assert = require("assert");
+import assert from "assert";
+import { describe, it } from "@jest/globals";
 
-const {NFAVisitor} = require("../src/nfa");
-const {DFAGenerator, splitCollect} = require("../src/dfa/generator");
+import { NFAVisitor } from "../src/nfa";
+import { DFAGenerator } from "../src/dfa/generator";
 
 
 describe("NFA -> DFA conversion", function() {
@@ -22,24 +23,22 @@ describe("NFA -> DFA conversion", function() {
         "y0", "y1", "y2", "y3", "y4",
       ],
       "a*": ["aaa", "aa", "a", ""]
-    }
+    } as const;
 
-    Object.keys(tests).forEach(regex => {
-      const inputs = tests[regex];
-
+    for (const [regex, inputs] of Object.entries(tests)) {
       const nfa = new NFAVisitor(regex).nfa;
       const dfa = new DFAGenerator(nfa).dfa;
 
-      inputs.forEach(input => {
-        let nfaMatches = nfa.matches(input);
-        let dfaMatches = dfa.matches(input);
+      for (const input of inputs) {
+        const nfaMatches = nfa.matches(input);
+        const dfaMatches = dfa.matches(input);
 
         assert.equal(
           nfa.matches(input), dfa.matches(input),
           "For regex `" + regex + "`, input `" + input + "` mismatched: " +
             "NFA (" + nfaMatches + "), DFA (" + dfaMatches + ")."
         );
-      });
-    });
+      }
+    }
   });
 });

@@ -1,16 +1,16 @@
 /* eslint no-console: 0 */
 
-var ArgumentParser = require('argparse').ArgumentParser;
+const { ArgumentParser }: any = require("argparse"); /* eslint-disable-line */
 
-var VERSION = require('../package.json').version;
+import { version as VERSION } from "../package.json";
 
-let {SolidityDFAWriter} = require('./solidity/dfa');
-let {GraphvizDFAWriter} = require('./graphviz/dfa');
-let {dfaFromNFA} = require('./dfa');
-let {nfaFromRegex} = require('./nfa');
+import { SolidityDFAWriter } from "../src/solidity/dfa";
+import { GraphvizDFAWriter } from "../src/graphviz/dfa";
+import { dfaFromNFA } from "../src/dfa";
+import { nfaFromRegex } from "../src/nfa";
 
 
-var argParser = new ArgumentParser({
+const argParser = new ArgumentParser({
   version: VERSION,
   addHelp: true,
   description: "Regex Solidity Generator"
@@ -51,23 +51,23 @@ argParser.addArgument(
   }
 );
 
-var args = argParser.parseArgs();
+const args = argParser.parseArgs();
 
-var nfa = nfaFromRegex(args.regex);
-let dfa = dfaFromNFA(nfa);
+const nfa = nfaFromRegex(args.regex);
+const dfa = dfaFromNFA(nfa);
 
 const writers = {
   solidity: SolidityDFAWriter,
   graphviz: GraphvizDFAWriter
-};
+} as const;
 
 
 args.outputs = args.outputs || ["solidity"];
 
-for (let target of args.outputs) {
-  let writer = new writers[target]();
+for (const target of args.outputs) {
+  const writer = new writers[target as keyof typeof writers]();
 
-  let output = writer.write(dfa, {
+  const output = writer.write(dfa, {
     name: args.name,
     regex: args.regex
   });
