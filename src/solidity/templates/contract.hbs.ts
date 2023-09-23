@@ -1,4 +1,4 @@
-{{#*inline "transitionExpr"~}}
+const template = `{{#*inline "transitionExpr"~}}
   {{#join matchIntervals " || "~}}
     {{#if equal~}}
   c == {{low}}
@@ -52,3 +52,6 @@ library {{name}} {
     return cur.accepts;
   }
 }
+`;
+
+export default template;

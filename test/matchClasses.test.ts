@@ -1,9 +1,18 @@
-const assert = require('assert');
+import assert from "assert";
+import { describe, it } from "@jest/globals";
 
-const {Symbol, Range, Negation, Union, Intersection} = require('../src/machines/matchClass');
+import {
+  Symbol, Range, Negation, Union, Intersection
+} from "../src/machines/matchClass";
 
-function codePoint(character) {
-  return character.codePointAt(0);
+function codePoint(character: string): number {
+  const codePoint = character.codePointAt(0);
+
+  if (typeof codePoint !== "number") {
+    throw new Error(`Character \`${character}\` does not have a valid codepoint`);
+  }
+
+  return codePoint;
 }
 
 const _a = codePoint("a");
@@ -19,11 +28,11 @@ const _i = codePoint("i");
 
 describe("Code-point interval combination", function() {
   it("should return a point for a Symbol", function() {
-    let symbol = new Symbol(_a);
+    const symbol = new Symbol(_a);
 
     assert.equal(symbol.intervals.size, 1);
 
-    let [m, n] = Array.from(symbol.intervals)[0]
+    const [m, n] = Array.from(symbol.intervals)[0]
     assert.equal(m, _a);
     assert.equal(n, _a);
   });
@@ -34,10 +43,10 @@ describe("Code-point interval combination", function() {
      *   \___/   \___/
      *     r       s
      */
-    let r = new Range(_b, _d);
-    let s = new Range(_f, _h);
+    const r = new Range(_b, _d);
+    const s = new Range(_f, _h);
 
-    let rs = new Intersection(r, s);
+    const rs = new Intersection(r, s);
 
     assert.equal(rs.intervals.size, 0);
   });
@@ -50,18 +59,15 @@ describe("Code-point interval combination", function() {
      *       \_______/
      *         s
      */
-    let r = new Range(_b, _f);
-    let s = new Range(_d, _h);
+    const r = new Range(_b, _f);
+    const s = new Range(_d, _h);
 
-    let rs = new Intersection(r, s);
+    const rs = new Intersection(r, s);
 
-    let intervals = Array.from(rs.intervals);
-
-    let characters = intervals.
-      map(([m, n]) => [String.fromCodePoint(m), String.fromCodePoint(n)])
+    const intervals = Array.from(rs.intervals);
 
     assert.equal(intervals.length, 1);
-    let [m, n] = intervals[0];
+    const [m, n] = intervals[0];
 
     assert.equal(m, _d);
     assert.equal(n, _f);
@@ -86,19 +92,19 @@ describe("Code-point interval combination", function() {
      *
      */
 
-    let u = new Union(
+    const u = new Union(
       new Range(_b, _e),
       new Range(_g, _i)
     );
-    let v = new Union(
+    const v = new Union(
       new Range(_a, _c),
       new Range(_e, _h)
     );
 
-    let uv = new Intersection(u, v);
-    let intervals = Array.from(uv.intervals);
+    const uv = new Intersection(u, v);
+    const intervals = Array.from(uv.intervals);
 
-    let characters = intervals.
+    const characters = intervals.
       map(([m, n]) => [String.fromCodePoint(m), String.fromCodePoint(n)])
 
 
@@ -115,26 +121,26 @@ describe("Code-point interval combination", function() {
   });
 
   it("should do De Morgan's", function() {
-    let u = new Union(
+    const u = new Union(
       new Range(_b, _e),
       new Range(_c, _c),
       new Range(_g, _i)
     );
-    let v = new Union(
+    const v = new Union(
       new Range(_a, _c),
       new Range(_e, _h)
     );
 
     // !( u | v ) = !u & !v
-    let uvNegUnion = new Negation(new Union(u, v));
-    let uvIntersectNegs = new Intersection(
+    const uvNegUnion = new Negation(new Union(u, v));
+    const uvIntersectNegs = new Intersection(
       new Negation(u), new Negation(v)
     );
 
-    let intervals1 = Array.from(uvNegUnion.intervals);
-    let intervals2 = Array.from(uvIntersectNegs.intervals);
+    const intervals1 = Array.from(uvNegUnion.intervals);
+    const intervals2 = Array.from(uvIntersectNegs.intervals);
 
-    assert(intervals1.length, intervals2.length);
+    assert.equal(intervals1.length, intervals2.length);
 
     for (let i = 0; i < intervals1.length; i++) {
       assert.equal(intervals1[i][0], intervals2[i][0]);
@@ -144,30 +150,30 @@ describe("Code-point interval combination", function() {
   });
 
   it("should negate adjacent ranges correctly", function() {
-    let u = new Union(
+    const u = new Union(
       new Range(_b, _e),
       new Range(_e, _f)
     );
 
-    let notU = new Negation(u);
+    const notU = new Negation(u);
 
-    let intervals = Array.from(notU.intervals);
-    assert(intervals.length, 2);
+    const intervals = Array.from(notU.intervals);
+    assert.equal(intervals.length, 2);
     assert.equal(intervals[0][1], _a);
     assert.equal(intervals[1][0], _g);
   });
 
   it("should simplify via double negation", function() {
-    let u = new Union(
+    const u = new Union(
       new Range(_b, _e),
       new Range(_e, _f)
     );
 
-    let notU = new Negation(u);
-    let notNotU = new Negation(notU);
+    const notU = new Negation(u);
+    const notNotU = new Negation(notU);
 
-    let intervals = Array.from(notNotU.intervals);
-    assert(intervals.length, 1);
+    const intervals = Array.from(notNotU.intervals);
+    assert.equal(intervals.length, 1);
     assert.equal(intervals[0][0], _b);
     assert.equal(intervals[0][1], _f);
   });
